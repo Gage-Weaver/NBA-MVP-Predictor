@@ -123,6 +123,7 @@ test = stats[stats['Year'] == 2023]  # Test 2023
 rf = RandomForestRegressor(n_estimators=25, random_state=1, min_samples_split=5)  # Create Random Forest regression model
 rf.fit(train[predictors], train['Share'])  # Fit model with training data (to try and predict mvp voting share)
 # Predictions
+print()
 predictions = rf.predict(test[predictors])  # Predict 2023 mvp voting share
 predictions = pd.DataFrame(predictions, columns=['Predictions'], index=test.index)  # Create DataFrame with predictions
 combination = pd.concat([test[['Player', 'Share']], predictions], axis=1)  # Combine predictions with actual data
@@ -135,5 +136,36 @@ print("Prediction for 2023 MVP Voting Share vs Actual Using Random Forest")
 print(combination.sort_values('Predictions', ascending=False).head(10))  # Print top 10 predictions
 
 
+# Predictions for 2024
+train = stats[stats['Year'] < 2024]  # Train data up to 2023
+test = stats[stats['Year'] == 2024]  # Test 2024
+# Create Ridge regression model
+print()
+reg = Ridge(alpha=1000)  # Create Ridge regression model (alpha is shrinking factor)
+reg.fit(train[predictors], train['Share'])  # Fit model with training data (to try and predict mvp voting share)
+# Predictions
+predictions = reg.predict(test[predictors])  # Predict 2024 mvp voting share
+predictions = pd.DataFrame(predictions, columns=['Predictions'], index=test.index)  # Create DataFrame with predictions
+combination = pd.concat([test[['Player', 'Share']], predictions], axis=1)  # Combine predictions with actual data
+combination = combination.sort_values('Predictions', ascending=False).head(10)  # Sort by predicted voting share
+combination['Rank'] = list(range(1, combination.shape[0]+1))  # Add rank column
+combination = combination.sort_values('Predictions', ascending=False)  # Sort by predicted voting share
+combination['Predicted_Rank'] = list(range(1, combination.shape[0]+1))  # Add predicted rank column
+print("Prediction for 2024 MVP Voting Share vs Actual Using Ridge Regression")
+print(combination.sort_values('Predictions', ascending=False).head(10))  # Print top 10 predictions
+# Create Random Forest regression model
+print()
+rf = RandomForestRegressor(n_estimators=50, random_state=1, min_samples_split=5)  # Create Random Forest regression model
+rf.fit(train[predictors], train['Share'])  # Fit model with training data (to try and predict mvp voting share)
+# Predictions
+predictions = rf.predict(test[predictors])  # Predict 2024 mvp voting share
+predictions = pd.DataFrame(predictions, columns=['Predictions'], index=test.index)  # Create DataFrame with predictions
+combination = pd.concat([test[['Player', 'Share']], predictions], axis=1)  # Combine predictions with actual data
+combination = combination.sort_values('Predictions', ascending=False).head(10)  # Sort by predicted voting share
+combination['Rank'] = list(range(1, combination.shape[0]+1))  # Add rank column
+combination = combination.sort_values('Predictions', ascending=False)  # Sort by predicted voting share
+combination['Predicted_Rank'] = list(range(1, combination.shape[0]+1))  # Add predicted rank column
+print("Prediction for 2024 MVP Voting Share vs Actual Using Random Forest")
+print(combination.sort_values('Predictions', ascending=False).head(10))  # Print top 10 predictions
 
 
